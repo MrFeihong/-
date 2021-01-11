@@ -1,0 +1,1 @@
+本地仓库——>LocalRepository——>隐藏文件git——>工作目录

@@ -1,0 +1,5 @@
+Github: 远程仓库
+远程URL：git@github.com:MrFeihong/-.git
+
+Git Bash Here: 命令
+  ssh-keygen -t rsa -C ‘1836774683@qq.com’
