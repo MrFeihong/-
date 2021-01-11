@@ -5,6 +5,8 @@ import com.alibaba.dubbo.common.logger.Logger;
 import com.alibaba.dubbo.common.logger.LoggerFactory;
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.itheima.health.constant.MessageConstant;
+import com.itheima.health.entity.PageResult;
+import com.itheima.health.entity.QueryPageBean;
 import com.itheima.health.entity.Result;
 import com.itheima.health.pojo.Setmeal;
 import com.itheima.health.service.SetmealService;
@@ -14,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -70,6 +73,70 @@ public class SetmealController {
             log.error("上传文件失败了",e);
             return new Result(false, MessageConstant.PIC_UPLOAD_FAIL);
         }
+    }
+
+    /**
+     * 分页查询
+     * @param queryPageBean
+     * @return
+     */
+    @PostMapping("/findPage")
+    public Result findPage(@RequestBody QueryPageBean queryPageBean){
+        // 调用业务层方法查询
+        PageResult<Setmeal> setmealPageResult = setmealService.findPage(queryPageBean);
+        // 返回查询结果
+        return new Result(true, MessageConstant.QUERY_SETMEAL_SUCCESS,setmealPageResult);
+
+    }
+
+    /**
+     * 根据id查询
+     * @return
+     */
+    @GetMapping("/findById")
+    public Result findById(int id ){
+        // 调用服务查询id
+        Setmeal setmeal = setmealService.findById(id);
+        // 构建前端需要的数据和域名
+        Map<String, Object> map = new HashMap<String, Object>(2);
+        map.put("setmeal", setmeal);
+        map.put("domain",QiNiuUtils.DOMAIN);
+        return new Result(true, MessageConstant.QUERY_SETMEAL_SUCCESS,map);
+    }
+
+    /**
+     * 根据id查询检查组集合
+     * @return
+     */
+    @GetMapping("/findCheckGroupIdsBySetmealId")
+    public Result findCheckGroupIdsBySetmealId(int id){
+        // 调用服务查询id
+        List<Integer> checkgroupIds = setmealService.findCheckGroupIdsBySetmealId(id);
+        // 返回结果
+        return new Result(true, MessageConstant.QUERY_SETMEAL_SUCCESS,checkgroupIds);
+        
+    }
+
+    /**
+     * 修改套餐
+     * @return
+     */
+    @PostMapping("/update")
+    public Result update(@RequestBody Setmeal setmeal,Integer[] checkgroupIds){
+        setmealService.update(setmeal,checkgroupIds);
+        return new Result(true, "修改套餐成功");
+    }
+
+    
+    /**
+     *删除套餐
+     * @return
+     */
+    @PostMapping("/deleteById")
+    public Result deleteById(int id){
+
+        setmealService.deleteById(id);
+        return new Result(true, "删除套餐成功");
     }
 
 

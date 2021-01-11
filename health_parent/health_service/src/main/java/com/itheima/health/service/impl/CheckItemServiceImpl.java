@@ -50,7 +50,7 @@ public class CheckItemServiceImpl implements CheckItemService {
      */
     @Override
     public PageResult<CheckItem> findPage(QueryPageBean queryPageBean) {
-
+        // 获取页码和每页大小
         PageHelper.startPage(queryPageBean.getCurrentPage(), queryPageBean.getPageSize());
         // 条件查询
         if(!StringUtils.isEmpty(queryPageBean.getQueryString())){

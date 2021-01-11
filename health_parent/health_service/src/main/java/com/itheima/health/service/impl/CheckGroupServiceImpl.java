@@ -69,16 +69,16 @@ public class CheckGroupServiceImpl implements CheckGroupService {
      */
     @Override
     public PageResult<CheckGroup> findPage(QueryPageBean queryPageBean) {
-        //
+        // 获取页码和每页大小
         PageHelper.startPage(queryPageBean.getCurrentPage(),queryPageBean.getPageSize());
         // 条件查询
         if (!StringUtils.isEmpty(queryPageBean.getQueryString())){
             // 模糊查询
             queryPageBean.setQueryString("%" + queryPageBean.getQueryString() + "%");
         }
-
+        // 分页查询语句
         Page<CheckGroup> page = checkGroupDao.findByCondition(queryPageBean.getQueryString());
-        // 返回结果
+        // 分页结果封装到对象中
         return new PageResult<CheckGroup>(page.getTotal(),page.getResult());
     }
 
@@ -112,7 +112,7 @@ public class CheckGroupServiceImpl implements CheckGroupService {
     @Override
     @Transactional
     public void update(CheckGroup checkgroup, Integer[] checkitemIds) {
-        // 调用业务修改
+        // 调用dao修改
         checkGroupDao.update(checkgroup);
         // 删除旧关系
         checkGroupDao.deleteCheckGroupCheckItem(checkgroup.getId());
