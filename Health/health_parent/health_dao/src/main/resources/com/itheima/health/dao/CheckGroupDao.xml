@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.itheima.health.dao.CheckGroupDao">
+
+    <!--查询所有 -->
+    <select id="findAll" resultType="checkgroup">
+        select * from t_checkgroup
+    </select>
+
+    <!--添加 -->
+    <insert id="add" parameterType="checkgroup" keyProperty="id" useGeneratedKeys="true">
+       insert into t_checkgroup (code,name,helpCode,sex,remark,attention)
+       values (#{code},#{name},#{helpCode},#{sex},#{remark},#{attention})
+   </insert>
+
+    <!--添加检查组与检查项的关系 -->
+    <insert id="addCheckGroupCheckItem" parameterType="int">
+        insert into t_checkgroup_checkitem (checkgroup_id,checkitem_id)
+        values(#{checkgroupId},#{checkitemId})
+    </insert>
+
+    <!--分页查询 -->
+    <select id="findByCondition" parameterType="String" resultType="checkgroup">
+        select * From t_checkgroup
+        <where>
+            <if test="value != null and value.length > 0">
+                code like #{queryString} or name like #{queryString} or helpCode like #{queryString}
+            </if>
+        </where>
+    </select>
+
+    <!--根据id查询 -->
+    <select id="findById" parameterType="int" resultType="checkgroup">
+        select * from t_checkgroup where id=#{id}
+    </select>
+
+    <!--根据id查询检查组中的检查项 -->
+    <select id="findCheckItemIdsByCheckGroupId" parameterType="int" resultType="int">
+        select checkitem_id from t_checkgroup_checkitem where checkgroup_id=#{id}
+    </select>
+
+    <!--修改 -->
+    <update id="update" parameterType="checkgroup">
+        update t_checkgroup
+        set
+            code=#{code},
+            name=#{name},
+            helpCode=#{helpCode},
+            sex=#{sex},
+            remark=#{remark},
+            attention=#{attention}
+        where id=#{id}
+    </update>
+
+    <!--删除旧关系 -->
+    <delete id="deleteCheckGroupCheckItem" parameterType="int">
+        delete from t_checkgroup_checkitem where checkgroup_id=#{id}
+    </delete>
+
+    <select id="findCountByCheckGroupId" parameterType="int" resultType="int">
+        select count(1) from t_checkgroup_checkitem where checkgroup_id=#{id}
+    </select>
+
+    <delete id="deleteById" parameterType="int">
+        delete from t_checkgroup where id=#{id}
+    </delete>
+
+
+    <!--根据套餐id查询检查项信息-->
+    <select id="findCheckGroupListById" resultMap="findByIdResultMap">
+        select * from t_checkgroup  where id
+        in (select checkgroup_id from t_setmeal_checkgroup where setmeal_id=#{id})
+    </select>
+    <resultMap type="com.itheima.health.pojo.CheckGroup" id="findByIdResultMap">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="code" property="code"/>
+        <result column="helpCode" property="helpCode"/>
+        <result column="sex" property="sex"/>
+        <result column="remark" property="remark"/>
+        <result column="attention" property="attention"/>
+        <collection property="checkItems" ofType="CheckItem" column="id" select="com.itheima.health.dao.CheckItemDao.findCheckItemListById">
+        </collection>
+    </resultMap>
+
+</mapper>

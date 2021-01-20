@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.itheima.health.dao.RoleDao">
+
+    <!--查询所有角色-->
+    <select id="findAll" resultType="role">
+        select * from t_role
+    </select>
+
+    <!--分页查询角色-->
+    <select id="findByCondition" resultType="role" parameterType="string">
+        <where>
+            <if test="value != null and value > 0 ">
+                name like #(value)
+            </if>
+        </where>
+    </select>
+
+</mapper>

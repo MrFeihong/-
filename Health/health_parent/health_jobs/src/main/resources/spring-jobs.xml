@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:task="http://www.springframework.org/schema/task"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/task
+       http://www.springframework.org/schema/task/spring-task.xsd
+       http://code.alibabatech.com/schema/dubbo http://code.alibabatech.com/schema/dubbo/dubbo.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!--freemarker配置，生成后文件的存放目录-->
+    <context:property-placeholder location="classpath:freemarker.properties,classpath:redis.properties"/>
+
+<!--5.1 task:annotation-driven, ThreadPoolTaskScheduler -->
+    <task:annotation-driven/>
+    <bean class="org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler"/>
+<!--5.2 应用名称 -->
+    <dubbo:application name="health_jobs"/>
+<!--5.3 注册中心在哪 -->
+    <dubbo:registry address="zookeeper://127.0.0.1:2181"/>
+<!--5.4 dubbo注解扫包(controller时的扫包)  -->
+    <dubbo:annotation package="com.itheima.health.jobs"/>
+
+<!--  导入freemarker  -->
+    <import resource="classpath:spring-freemarker.xml"/>
+    <!--导入redis-->
+    <import resource="classpath:spring-redis.xml"/>
+
+</beans>
