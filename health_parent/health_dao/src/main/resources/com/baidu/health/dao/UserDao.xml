@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.baidu.health.dao.UserDao" >
+
+    <select id="findByUsername" parameterType="String" resultMap="userRolePermission">
+        select u.id,u.username,u.password,
+            ur.role_id,r.name role_name,r.keyword role_keyword,
+            rp.permission_id, p.name permission_name,p.keyword permission_keyword
+        from
+        t_user u, t_user_role ur, t_role r,t_role_permission rp, t_permission p
+        where u.id=ur.user_id and ur.role_id=r.id and r.id=rp.role_id
+        and rp.permission_id=p.id and u.username=#{username}
+    </select>
+    <resultMap id="userRolePermission" type="User">
+        <id property="id" column="id"/>
+        <result property="username" column="username"/>
+        <result property="password" column="password"/>
+        <collection property="roles" ofType="Role">
+            <id property="id" column="role_id"/>
+            <result property="name" column="role_name"/>
+            <result property="keyword" column="role_keyword"/>
+            <collection property="permissions" ofType="Permission">
+                <id property="id" column="permission_id"/>
+                <result property="name" column="permission_name"/>
+                <result property="keyword" column="permission_keyword"/>
+            </collection>
+        </collection>
+    </resultMap>
+
+    <select id="findByUsername2" parameterType="string" resultType="com.baidu.health.pojo.User">
+        select * from t_user where username = #{value}
+    </select>
+
+    <select id="findPage" parameterType="string" resultType="com.baidu.health.pojo.User">
+        select * from t_user
+        <if test="value != null and value.length > 0">
+            where username = #{value}
+        </if>
+    </select>
+
+    <insert id="add" parameterType="com.baidu.health.pojo.User">
+        <selectKey keyProperty="id" resultType="int" order="AFTER">
+            select LAST_INSERT_ID()
+        </selectKey>
+        insert into t_user(birthday,gender,username,password,remark,telephone)
+        values
+        (#{birthday},#{gender},#{username},#{password},#{remark},#{telephone})
+    </insert>
+
+    <!--设置检查组和检查项多对多关系，操作的是中间关系表-->
+    <insert id="setUserAndRole" parameterType="map">
+        insert into t_user_role(user_id,role_id) values (#{userId},#{roleId})
+    </insert>
+
+    <select id="findById" parameterType="int" resultType="com.baidu.health.pojo.User">
+        select * from t_user where station is null and id = #{id}
+    </select>
+
+    <select id="findRoleIdsById" parameterType="Integer" resultType="Integer">
+        select role_id from t_user_role where user_id = #{id}
+    </select>
+
+    <update id="edit" parameterType="com.baidu.health.pojo.User">
+        update t_user
+        <set>
+            <if test="birthday != null">
+                birthday = #{birthday},
+            </if>
+            <if test="username != null">
+                username = #{username},
+            </if>
+            <if test="gender != null">
+                gender = #{gender},
+            </if>
+            <if test="telephone != null">
+                telephone = #{telephone},
+            </if>
+            <if test="remark != null">
+                remark = #{remark},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteAssociation" parameterType="int">
+        delete from t_user_role where user_id = #{user_id}
+    </delete>
+
+
+    <delete id="delete" parameterType="int">
+        delete from t_user where id = #{id}
+    </delete>
+</mapper>

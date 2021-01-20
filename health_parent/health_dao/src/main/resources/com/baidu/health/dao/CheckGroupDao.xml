@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.baidu.health.dao.CheckGroupDao">
+    <!--    查询所有检查组-->
+    <select id="findAll" resultType="com.baidu.health.pojo.CheckGroup">
+         select * from t_checkgroup
+    </select>
+
+    <!--    检查组分页查询-->
+    <select id="findByCondition" parameterType="String" resultType="checkgroup">
+        select * From t_checkgroup
+        <where>
+            <if test="value != null and value.length > 0">
+                code like #{queryString} or name like #{queryString} or helpCode like #{queryString}
+            </if>
+        </where>
+    </select>
+
+
+    <!--    添加检查组信息并且返回查询检查组的id-->
+    <!-- keyProperty指定实体类中的主键，useGeneratedKeys使用自动生成的key -->
+    <insert id="add" parameterType="checkgroup" keyProperty="id" useGeneratedKeys="true">
+       insert into t_checkgroup (code,name,helpCode,sex,remark,attention)
+       values (#{code},#{name},#{helpCode},#{sex},#{remark},#{attention})
+   </insert>
+
+<!--    <insert id="add" parameterType="checkgroup">-->
+<!--        insert into t_checkgroup (code,name,helpCode,sex,remark,attention)-->
+<!--        values (#{code},#{name},#{helpCode},#{sex},#{remark},#{attention})-->
+<!--        <selectKey resultType="int" order="AFTER" keyProperty="id">-->
+<!--        select last_insert_id(#{id})-->
+<!--        </selectKey>-->
+<!--    </insert>-->
+
+<!--    查询检查组的name 判断添加或修改是否重复-->
+    <select id="findByName" resultType="com.baidu.health.pojo.CheckGroup">
+        select * from t_checkgroup where name=#{name}
+    </select>
+
+    <!--    查询检查组的name 判断添加或修改是否重复-->
+    <select id="findByCoed" resultType="com.baidu.health.pojo.CheckGroup">
+        select * from t_checkgroup where code=#{code}
+    </select>
+
+
+<!--    根据id查询检查组信息 回显数据-->
+    <select id="findById" resultType="com.baidu.health.pojo.CheckGroup">
+         select * from t_checkgroup where id=#{id}
+    </select>
+
+<!--    根据检查组id查询选中的检查项id 回显数据-->
+    <select id="findCheckItemIdsByCheckGroupId" parameterType="int" resultType="int">
+        select checkitem_id from t_checkgroup_checkitem where checkgroup_id=#{id}
+    </select>
+
+<!--    修改检查组-->
+    <update id="update" parameterType="checkgroup">
+        update t_checkgroup
+        set
+            code=#{code},
+            name=#{name},
+            helpCode=#{helpCode},
+            sex=#{sex},
+            remark=#{remark},
+            attention=#{attention}
+        where id=#{id}
+    </update>
+
+    <!--    删除中间表-->
+    <delete id="deleteCheckGroupCheckItem" parameterType="int">
+        delete from t_checkgroup_checkitem where checkgroup_id=#{id}
+    </delete>
+
+    <!--    添加检查组和检查项中间表关系-->
+    <insert id="addCheckGroupCheckItem" parameterType="int">
+        insert into t_checkgroup_checkitem (checkgroup_id,checkitem_id)
+        values(#{checkgroupId},#{checkitemId})
+    </insert>
+
+    <!--    查询是否有被套餐使用-->
+    <select id="findSetmealCountByCheckGroupId" parameterType="int" resultType="int">
+         select count(1) from t_setmeal_checkgroup where checkgroup_id=#{id}
+    </select>
+
+    <!--    删除检查组信息-->
+    <delete id="deleteById" parameterType="int">
+        delete from t_checkgroup where id=#{id}
+     </delete>
+
+    <select id="findByIdOrNameOrCoed" resultType="com.baidu.health.pojo.CheckGroup"></select>
+</mapper>

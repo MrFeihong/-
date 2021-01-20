@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.baidu.health.dao.OrderSettingDao">
+
+
+    <!--    根据日期查询是否有该条数据 有则返回该日数据-->
+    <select id="findByOrderDate" parameterType="date" resultType="ordersetting">
+        select * from t_ordersetting where orderDate=#{orderDate,jdbcType=DATE}
+    </select>
+
+<!--    修改该日的可预约人数-->
+    <update id="updateNumber" parameterType="Ordersetting">
+        update t_ordersetting set number = #{number} where orderDate=#{orderDate,jdbcType=DATE}
+    </update>
+
+<!--    添加该日的日期和可预约人数-->
+    <insert id="add" parameterType="OrderSetting">
+        insert into t_ordersetting (orderDate,number,reservations)
+        values (#{orderDate,jdbcType=DATE},#{number},#{reservations})
+    </insert>
+
+<!--    通过月份模糊查询当月预约设置信息集合-->
+    <select id="findOrderSettingByMonth" parameterType="string" resultType="map">
+        select CAST(DATE_FORMAT(orderdate,'%d') AS SIGNED) date,number,reservations
+        From t_ordersetting where orderDate like #{month}
+    </select>
+
+    <select id="getOrderSettingByMonth" parameterType="string" resultType="map">
+        select CAST(DATE_FORMAT(orderdate,'%d') AS SIGNED) date,number,reservations
+        From t_ordersetting where orderDate like #{month}
+    </select>
+
+    <!--更新已预约人数-->
+    <update id="editReservationsByOrderDate" parameterType="OrderSetting">
+        update t_ordersetting set reservations = reservations+1 where orderDate = #{orderDate,jdbcType=DATE}
+        and reservations &lt; number
+    </update>
+
+    <delete id="cleanOrderSetting">
+        delete from t_ordersetting where orderDate &lt;= #{date,jdbcType=DATE}
+    </delete>
+
+</mapper>

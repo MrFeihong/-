@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>500 后台出错</title>
+    <style>
+        @font-face {
+            font-family: 'Creepster';
+            font-style: normal;
+            font-weight: 400;
+            unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+        }
+        
+        body {
+            background-color: #333333;
+            color: white;
+            font-family: 'Arial Black';
+            text-align: center;
+        }
+        
+        #heading {
+            font-family: 'Creepster', cursive;
+            font-size: 6em
+        }
+        
+        .container {
+            width: 80%;
+            display: block;
+            margin: 0 auto;
+        }
+        
+        .error-num {
+            font-size: 8em;
+        }
+        
+        .eye {
+            background: #fff;
+            border-radius: 50%;
+            display: inline-block;
+            height: 100px;
+            position: relative;
+            width: 100px;
+        }
+        
+        .eye::after {
+            background: #000;
+            border-radius: 50%;
+            bottom: 56.1px;
+            content: ' ';
+            height: 33px;
+            position: absolute;
+            right: 33px;
+            width: 33px;
+        }
+        
+        .italic {
+            font-style: italic;
+        }
+        
+        p {
+            margin-bottom: 4em;
+        }
+        
+        a {
+            color: white;
+            text-decoration: none;
+            text-transform: uppercase;
+        }
+        
+        a:hover {
+            color: lightgray;
+        }
+        
+        ol {
+            list-style-position: inside;
+            text-align: left;
+        }
+        
+        ol li ul {
+            list-style-type: disc;
+        }
+        
+        ol li ul li {
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class='container'>
+        <span class="error-num">5</span>
+        <div class='eye'></div>
+        <div class='eye'></div>
+        <div id="heading">后台出错</div>
+        <div style="position: relative;width: 600px;height:300px;display: inline-block;">
+            <ol>
+                <li>看后台错误的日志！，如果没有日志，记得添加log4j.properties</li>
+                <li>错误提示信息中有ibatis或mybatis的内容，则检查dao映射文件</li>
+                <li>
+                    错误异常为NullPointException，由空对象null.方法()导致的，<br/>&nbsp;&nbsp;&nbsp;&nbsp;看错误日志中显示代码中的哪一行，然后断点调试代码
+                </li>
+                <li>Spring IOC 依赖注入问题
+                    <ul>
+                        <li>检查dao配置文件(别名、dao扫包)</li>
+                        <li>检查依赖注入时的属性类型是否为接口</li>
+                        <li>Spring默认创建的bean对象名称为类名首字母小写</li>
+                    </ul>
+                </li>
+                <li>target目录中的项目目录下的文件是否完整,e.g.
+                    <ul>
+                        <li>是否有web.xml</li>
+                        <li>WEB-INF/classes/配置文件是否已更新、齐全</li>
+                    </ul>
+                </li>
+                <li>停止tomcat，删除target目录，再执行package，再启动tomcat</li>
+            </ol>
+        </div>
+    </div><a href="javascript:history.go(-1)">返回</a>
+</body>
+
+</html>

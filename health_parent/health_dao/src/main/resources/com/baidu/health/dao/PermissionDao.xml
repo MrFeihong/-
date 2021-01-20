@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.baidu.health.dao.PermissionDao">
+
+    <select id="findByRoleId" parameterType="int" resultType="com.baidu.health.pojo.Permission">
+        select p.* from t_permission p,t_role_permission rp where p.id = rp.permission_id and rp.role_id = #{role_id}
+    </select>
+
+    <!--查询权限名称-->
+    <select id="findByName" resultType="permission">
+        select * from t_permission where name=#{name}
+    </select>
+    <!--查询权限关键字-->
+    <select id="findByKeyWord" resultType="permission">
+       select * from t_permission where keyword=#{keyword}
+    </select>
+    <!--添加权限-->
+    <insert id="add" parameterType="permission">
+        insert into t_permission (name,keyword,description) values (#{name},#{keyword},#{description})
+    </insert>
+
+
+    <!--分页查询权限-->
+    <select id="findByCondition" parameterType="string" resultType="permission">
+        select * From t_permission
+        <where>
+            <if test="value !=null and value.length>0">
+                name like #{value}
+            </if>
+        </where>
+    </select>
+
+
+    <!--根据id回显-->
+    <select id="findById" parameterType="int" resultType="permission">
+        select * from t_permission where id=#{id}
+    </select>
+    <!--修改权限-->
+    <update id="update" parameterType="permission">
+        update t_permission set name=#{name},keyword=#{keyword},description=#{description} where id=#{id}
+    </update>
+
+
+    <!--查询权限是否被使用-->
+    <select id="permissionById" parameterType="int" resultType="int">
+        select count(1) from t_role_permission where permission_id=#{id}
+    </select>
+    <!--根据id删除权限-->
+    <delete id="deleteById" parameterType="int">
+        delete from t_permission where id=#{id}
+    </delete>
+    <select id="findAll" resultType="permission">
+        select * from  t_permission
+    </select>
+</mapper>

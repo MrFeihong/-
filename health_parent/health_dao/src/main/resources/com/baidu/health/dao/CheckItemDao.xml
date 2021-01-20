@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.baidu.health.dao.CheckItemDao">
+
+    <!--查询所有-->
+    <select id="findAll" resultType="com.baidu.health.pojo.CheckItem">
+        select * from t_checkitem
+    </select>
+
+    <!-- 校验完添加检查项-->
+    <insert id="add" parameterType="com.baidu.health.pojo.CheckItem">
+        insert into t_checkitem(code,name,sex,age,price,type,remark,attention)
+        values
+        (#{code},#{name},#{sex},#{age},#{price},#{type},#{remark},#{attention})
+    </insert>
+
+<!--    根据name查询添加的检查项是否重复-->
+    <select id="findByName" resultType="com.baidu.health.pojo.CheckItem">
+        select * from t_checkitem where name=#{name}
+    </select>
+
+<!--    根据code查询添加的检查项是否重复-->
+    <select id="findByCoed" resultType="com.baidu.health.pojo.CheckItem">
+        select * from t_checkitem where code=#{code}
+    </select>
+
+<!--    查询检查项是否是否被检查组调用-->
+    <select id="CountByCheckItemId" parameterType="int" resultType="java.lang.Integer">
+        select count(*) from t_checkgroup_checkitem where checkitem_id=#{id}
+    </select>
+
+    <!--    根据id删除检查项-->
+    <delete id="deleteById" parameterType="int">
+        delete from t_checkitem where id=#{id}
+    </delete>
+<!--    根据id查询检查项回显-->
+    <select id="findById" resultType="com.baidu.health.pojo.CheckItem">
+       select * from t_checkitem where id=#{id}
+    </select>
+
+
+    <update id="update" parameterType="checkitem">
+      update t_checkitem
+        set
+        code=#{code},
+        name=#{name},
+        sex=#{sex},
+        age=#{age},
+        price=#{price},
+        type=#{type},
+        remark=#{remark},
+        attention=#{attention}
+         where id=#{id}
+    </update>
+
+    <!--    查询检查项分页-->
+    <!-- Mybatis 动态参数赋值 DynamicContext<if>标签里的变量，如果参数类型是基本数据类型，
+    只能用 value 或 _parameter，这个是由它的底层ognl表达式决定的。如果参数类型是对象类型，
+    则可以填它的属性。另外，使用#的参数可以是形参名也可以是value-->
+    <select id="findByCondition" parameterType="string" resultType="checkitem">
+        select * From t_checkitem
+        <where>
+            <if test="value !=null and value.length>0">
+                code like #{queryString} or name like #{queryString}
+            </if>
+        </where>
+    </select>
+
+<!--    根据id name code查询检查项-->
+<!--    <select id="findByIdOrNameOrcoed" parameterType="checkItem" resultType="checkGroup">-->
+<!--        select * from t_checkitem-->
+<!--        <where>-->
+<!--            <choose>-->
+<!--                <when test="name != null and name.length>0">-->
+<!--                    or name=#{name}-->
+<!--                </when>-->
+<!--                <when test="code != null and code.length>0">-->
+<!--                    or code=#{code}-->
+<!--                </when>-->
+<!--                <otherwise></otherwise>-->
+<!--            </choose>-->
+<!--            <when test="name != null and name.length>0">-->
+<!--                or name=#{name}-->
+<!--            </when>-->
+<!--            <if test="code != null and code.length>0">-->
+<!--                or code=#{code}-->
+<!--            </if>-->
+<!--        </where>-->
+<!--    </select>-->
+</mapper>

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.baidu.health.dao.MenuDao">
+    <select id="findUserMenuRole" parameterType="Integer" resultMap="MyResultMap">
+        select m.name mname,cm.name cmname,m.linkUrl murl,cm.linkUrl cmurl,m.path mpath,cm.path cmpath,m.icon micon
+        from
+            t_menu m,t_menu cm
+        where
+            m.id = cm.parentMenuId
+        and m.id in(select rm.menu_id from t_role_menu rm where rm.role_id = #{value})
+    </select>
+    <resultMap id="MyResultMap" type="Menu">
+        <result property="name" column="mname"></result>
+        <result property="linkUrl" column="murl"></result>
+        <result property="path" column="mpath"></result>
+        <result property="icon" column="micon"></result>
+        <collection property="children" ofType="Menu">
+            <result property="name" column="cmname"></result>
+            <result property="linkUrl" column="cmurl"></result>
+            <result property="path" column="cmpath"></result>
+        </collection>
+    </resultMap>
+
+    <!--新增-->
+    <insert id="add" parameterType="Menu">
+        insert into t_menu(id,name,linkUrl,path,priority,description,parentMenuId,icon,level)
+                      values
+        (null,#{name},#{linkUrl},#{path},#{priority},#{description},#{parentMenuId},#{icon},#{level})
+    </insert>
+
+    <!--分页-->
+    <select id="findByCondition" parameterType="String" resultType="Menu">
+        select * from t_menu
+        <if test="value != null and value.length > 0">
+            where id = #{value} or name = #{value}
+        </if>
+    </select>
+
+    <!--删除-->
+    <delete id="deleteById" parameterType="int">
+        delete from t_menu where id = #{id}
+    </delete>
+
+    <!--根据ID回显-->
+    <select id="findById" parameterType="int"  resultType="Menu">
+        select * from t_menu where id = #{id};
+    </select>
+
+    <!--编辑-->
+    <update id="edit" parameterType="Menu">
+        update t_menu
+        <set>
+            <if test="name != null">
+                name = #{name},
+            </if>
+            <if test="linkUrl != null">
+                linkUrl = #{linkUrl},
+            </if>
+            <if test="path != null">
+                path = #{path},
+            </if>
+            <if test="priority != null">
+                priority = #{priority},
+            </if>
+            <if test="description != null">
+                description = #{description},
+            </if>
+            <if test="parentMenuId != null">
+                parentMenuId = #{parentMenuId},
+            </if>
+            <if test="icon != null">
+                icon = #{icon},
+            </if>
+            <if test="level != null">
+                level = #{level},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+
+    <!--查询所有-->
+    <select id="findAll" resultType="Menu">
+        select * from t_menu
+    </select>
+
+    <!--查询子菜单-->
+    <select id="findChildren" parameterType="Integer" resultType="Menu">
+        select * from t_menu where parentMenuId = #{id}
+    </select>
+
+</mapper>
